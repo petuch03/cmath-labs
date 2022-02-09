@@ -138,7 +138,7 @@ func entryPoint() {
 
 	fmt.Println("-----result vector-----")
 	for i := 0; i < size; i++ {
-		fmt.Printf("x%d=%f \n", i+1, matrixX2[i][0])
+		fmt.Printf("x%d=%e \n", i+1, matrixX2[i][0])
 	}
 
 	fmt.Println("\n-----converges?-----")
@@ -150,6 +150,6 @@ func entryPoint() {
 
 	fmt.Println("\n-----error vector-----")
 	for i := 0; i < size; i++ {
-		fmt.Printf("x%d=%f \n", i+1, math.Abs(matrixX2[i][0]-matrixX1[i][0]))
+		fmt.Printf("x%d=%e \n", i+1, math.Abs(matrixX2[i][0]-matrixX1[i][0]))
 	}
 }
