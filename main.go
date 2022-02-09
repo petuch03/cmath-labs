@@ -13,7 +13,7 @@ var matrix [][]float64
 var M int
 
 func main() {
-	fmt.Print("print file to file input and print console to console input: ")
+	fmt.Print("print 'file' or 'console' to set input type: ")
 	_, _ = fmt.Scanf("%s", &inputType)
 	if inputType == "file" {
 		f, _ := os.Open("resources/input.txt")
@@ -28,6 +28,7 @@ func main() {
 	} else if inputType == "console" {
 
 	} else {
+		fmt.Print("unsupported input type: ", inputType)
 		os.Exit(1)
 	}
 	_, _ = fmt.Scanf("%d %d %f", &size, &M, &precision)
@@ -44,8 +45,8 @@ func main() {
 
 	fmt.Println()
 	prepareMatrixForCalculation(matrix)
-	initMatrixX1andX2()
-	startComputed()
+	setResultMatrices()
+	entryPoint()
 	matrix = nil
 	debug.FreeOSMemory()
 }

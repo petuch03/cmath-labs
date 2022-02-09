@@ -27,20 +27,11 @@ func prepareMatrixForCalculation(allMatrix [][]float64) {
 		}
 		matrixB[i][0] = allMatrix[i][size]
 	}
-	fmt.Println("before swaps: ")
-	for i := 0; i < size; i++ {
-		fmt.Print(matrixA[i], matrixB[i])
-		fmt.Println()
-	}
-
+	//for i := 0; i < size; i++ {
+	//	fmt.Print(matrixA[i], matrixB[i])
+	//	fmt.Println()
+	//}
 	setDiagonalDominance()
-
-	fmt.Println("after swaps: ")
-	for i := 0; i < size; i++ {
-		fmt.Print(matrixA[i], matrixB[i])
-		fmt.Println()
-	}
-
 }
 
 // перестановка по индексам
@@ -92,7 +83,7 @@ func setDiagonalDominance() {
 	}
 }
 
-func initMatrixX1andX2() {
+func setResultMatrices() {
 	matrixX1 = make([][]float64, size)
 	matrixX2 = make([][]float64, size)
 	for i := range matrixX1 {
@@ -111,22 +102,21 @@ func iteration() {
 	for i := 0; i < size; i++ {
 		matrixX1[i][0] = matrixX2[i][0]
 	}
-	var sumOther float64
+	var sum float64
 	for i := 0; i < size; i++ {
-		sumOther = 0
+		sum = 0
 		for j := 0; j < size; j++ {
 			if j < i {
-				sumOther += matrixA[i][j] * matrixX2[j][0] / matrixA[i][i]
-			} else if j == i {
-			} else {
-				sumOther += matrixA[i][j] * matrixX1[j][0] / matrixA[i][i]
+				sum += matrixA[i][j] * matrixX2[j][0] / matrixA[i][i]
+			} else if j != i {
+				sum += matrixA[i][j] * matrixX1[j][0] / matrixA[i][i]
 			}
 		}
-		matrixX2[i][0] = matrixB[i][0]/matrixA[i][i] - sumOther
+		matrixX2[i][0] = matrixB[i][0]/matrixA[i][i] - sum
 	}
 }
 
-func checkAllNewX() bool {
+func checkResults() bool {
 	for i := 0; i < size; i++ {
 		if math.Abs(matrixX2[i][0]-matrixX1[i][0]) > precision {
 			return false
@@ -135,29 +125,31 @@ func checkAllNewX() bool {
 	return true
 }
 
-func startComputed() {
+func entryPoint() {
 	count := 0
 
 	for true {
 		iteration()
 		count++
-		if checkAllNewX() || count >= M {
+		if checkResults() || count >= M {
 			break
 		}
 	}
 
-	fmt.Println("after all iterations")
+	fmt.Println("-----result vector-----")
 	for i := 0; i < size; i++ {
 		fmt.Printf("x%d=%f \n", i+1, matrixX2[i][0])
 	}
 
+	fmt.Println("\n-----converges?-----")
 	if count >= M {
-		fmt.Println("does not converge")
+		fmt.Println("no")
 	} else {
-		fmt.Println("converges at", count)
+		fmt.Println("yes, converges at", count)
 	}
 
+	fmt.Println("\n-----error vector-----")
 	for i := 0; i < size; i++ {
-		fmt.Printf("vector Х_%d=%f \n", i+1, math.Abs(matrixX2[i][0]-matrixX1[i][0]))
+		fmt.Printf("x%d=%f \n", i+1, math.Abs(matrixX2[i][0]-matrixX1[i][0]))
 	}
 }
