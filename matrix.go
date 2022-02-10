@@ -87,23 +87,6 @@ func setResultMatrices() {
 	}
 }
 
-//func iter() {
-//	for i := 0; i < size; i++ {
-//		matrixX1[i][0] = matrixX2[i][0]
-//	}
-//	for i := 0; i < size; i++ {
-//		sum := 0.0
-//		for j := 0; j < size; j++ {
-//			if j < i {
-//				sum += matrixA[i][j] * matrixX2[j][0] / matrixA[i][i]
-//			} else if j != i {
-//				sum += matrixA[i][j] * matrixX1[j][0] / matrixA[i][i]
-//			}
-//		}
-//		matrixX2[i][0] = matrixB[i][0]/matrixA[i][i] - sum
-//	}
-//}
-
 func entryPoint() {
 	count := 0
 
