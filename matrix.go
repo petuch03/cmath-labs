@@ -98,13 +98,12 @@ func setResultMatrices() {
 	}
 }
 
-func iteration() {
+func iter() {
 	for i := 0; i < size; i++ {
 		matrixX1[i][0] = matrixX2[i][0]
 	}
-	var sum float64
 	for i := 0; i < size; i++ {
-		sum = 0
+		sum := 0.0
 		for j := 0; j < size; j++ {
 			if j < i {
 				sum += matrixA[i][j] * matrixX2[j][0] / matrixA[i][i]
@@ -116,20 +115,11 @@ func iteration() {
 	}
 }
 
-func checkResults() bool {
-	for i := 0; i < size; i++ {
-		if math.Abs(matrixX2[i][0]-matrixX1[i][0]) > precision {
-			return false
-		}
-	}
-	return true
-}
-
 func entryPoint() {
 	count := 0
 
 	for true {
-		iteration()
+		iter()
 		count++
 		if checkResults() || count >= M {
 			break
@@ -152,4 +142,13 @@ func entryPoint() {
 	for i := 0; i < size; i++ {
 		fmt.Printf("x%d=%e \n", i+1, math.Abs(matrixX2[i][0]-matrixX1[i][0]))
 	}
+}
+
+func checkResults() bool {
+	for i := 0; i < size; i++ {
+		if math.Abs(matrixX2[i][0]-matrixX1[i][0]) > precision {
+			return false
+		}
+	}
+	return true
 }
