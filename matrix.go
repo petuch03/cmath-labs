@@ -34,17 +34,6 @@ func prepareMatrixForCalculation(allMatrix [][]float64) {
 	setDiagonalDominance()
 }
 
-// перестановка по индексам
-func swapLines(i int, j int) {
-	var tmp = matrixA[i]
-	matrixA[i] = matrixA[j]
-	matrixA[j] = tmp
-
-	var tmpB = matrixB[i][0]
-	matrixB[i][0] = matrixB[j][0]
-	matrixB[j][0] = tmpB
-}
-
 func shufflingRows(indexOfVariable int) int {
 	var currentIndex = indexOfVariable
 	var currentCoefficient float64
@@ -64,11 +53,11 @@ func shufflingRows(indexOfVariable int) int {
 				isDefinitelyBigger = true
 			}
 			swapLines(indexOfVariable, i)
-			return i
+			return 1
 		}
 	}
 	fmt.Println("unable to shuffle matrix in proper way")
-	os.Exit(0)
+	os.Exit(1)
 	return 0
 }
 
@@ -79,7 +68,7 @@ func setDiagonalDominance() {
 	}
 	if !isDefinitelyBigger {
 		fmt.Println("no row with '>' strict rule")
-		os.Exit(0)
+		os.Exit(1)
 	}
 }
 
@@ -98,28 +87,42 @@ func setResultMatrices() {
 	}
 }
 
-func iter() {
-	for i := 0; i < size; i++ {
-		matrixX1[i][0] = matrixX2[i][0]
-	}
-	for i := 0; i < size; i++ {
-		sum := 0.0
-		for j := 0; j < size; j++ {
-			if j < i {
-				sum += matrixA[i][j] * matrixX2[j][0] / matrixA[i][i]
-			} else if j != i {
-				sum += matrixA[i][j] * matrixX1[j][0] / matrixA[i][i]
-			}
-		}
-		matrixX2[i][0] = matrixB[i][0]/matrixA[i][i] - sum
-	}
-}
+//func iter() {
+//	for i := 0; i < size; i++ {
+//		matrixX1[i][0] = matrixX2[i][0]
+//	}
+//	for i := 0; i < size; i++ {
+//		sum := 0.0
+//		for j := 0; j < size; j++ {
+//			if j < i {
+//				sum += matrixA[i][j] * matrixX2[j][0] / matrixA[i][i]
+//			} else if j != i {
+//				sum += matrixA[i][j] * matrixX1[j][0] / matrixA[i][i]
+//			}
+//		}
+//		matrixX2[i][0] = matrixB[i][0]/matrixA[i][i] - sum
+//	}
+//}
 
 func entryPoint() {
 	count := 0
 
 	for true {
-		iter()
+		//iteration
+		for i := 0; i < size; i++ {
+			matrixX1[i][0] = matrixX2[i][0]
+		}
+		for i := 0; i < size; i++ {
+			sum := 0.0
+			for j := 0; j < size; j++ {
+				if j < i {
+					sum += matrixA[i][j] * matrixX2[j][0] / matrixA[i][i]
+				} else if j != i {
+					sum += matrixA[i][j] * matrixX1[j][0] / matrixA[i][i]
+				}
+			}
+			matrixX2[i][0] = matrixB[i][0]/matrixA[i][i] - sum
+		}
 		count++
 		if checkResults() || count >= M {
 			break
@@ -151,4 +154,15 @@ func checkResults() bool {
 		}
 	}
 	return true
+}
+
+// перестановка по индексам
+func swapLines(i int, j int) {
+	var tmp = matrixA[i]
+	matrixA[i] = matrixA[j]
+	matrixA[j] = tmp
+
+	var tmpB = matrixB[i][0]
+	matrixB[i][0] = matrixB[j][0]
+	matrixB[j][0] = tmpB
 }
