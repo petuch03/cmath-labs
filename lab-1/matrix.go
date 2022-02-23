@@ -1,4 +1,4 @@
-package main
+package lab_1
 
 import (
 	"fmt"
@@ -9,25 +9,26 @@ import (
 var matrixA [][]float64
 var matrixB [][]float64
 var matrixX1 [][]float64
-var matrixX2 [][]float64
+var MatrixX2 [][]float64
 var isDefinitelyBigger bool
+var count = 0
 
-func prepareMatrixForCalculation(allMatrix [][]float64) {
-	matrixA = make([][]float64, size)
+func PrepareMatrixForCalculation(allMatrix [][]float64) {
+	matrixA = make([][]float64, Size)
 	for i := range matrixA {
-		matrixA[i] = make([]float64, size)
+		matrixA[i] = make([]float64, Size)
 	}
-	matrixB = make([][]float64, size)
+	matrixB = make([][]float64, Size)
 	for i := range matrixB {
 		matrixB[i] = make([]float64, 1)
 	}
-	for i := 0; i < size; i++ {
-		for j := 0; j < size; j++ {
+	for i := 0; i < Size; i++ {
+		for j := 0; j < Size; j++ {
 			matrixA[i][j] = allMatrix[i][j]
 		}
-		matrixB[i][0] = allMatrix[i][size]
+		matrixB[i][0] = allMatrix[i][Size]
 	}
-	//for i := 0; i < size; i++ {
+	//for i := 0; i < Size; i++ {
 	//	fmt.Print(matrixA[i], matrixB[i])
 	//	fmt.Println()
 	//}
@@ -39,10 +40,10 @@ func shufflingRows(indexOfVariable int) int {
 	var currentCoefficient float64
 	var currentSum float64
 
-	for i := 0; i < size; i++ {
+	for i := 0; i < Size; i++ {
 		currentSum = 0
 		currentCoefficient = math.Abs(matrixA[i][currentIndex])
-		for j := 0; j < size; j++ {
+		for j := 0; j < Size; j++ {
 			if j != currentIndex {
 				currentSum += math.Abs(matrixA[i][j])
 			}
@@ -63,7 +64,7 @@ func shufflingRows(indexOfVariable int) int {
 
 // переставить все возможные варианты и определяет выполняется ли хоть когда нибудь диагональное соотношение
 func setDiagonalDominance() {
-	for i := 0; i < size; i++ {
+	for i := 0; i < Size; i++ {
 		shufflingRows(i)
 	}
 	if !isDefinitelyBigger {
@@ -72,67 +73,49 @@ func setDiagonalDominance() {
 	}
 }
 
-func setResultMatrices() {
-	matrixX1 = make([][]float64, size)
-	matrixX2 = make([][]float64, size)
+func SetResultMatrices() {
+	matrixX1 = make([][]float64, Size)
+	MatrixX2 = make([][]float64, Size)
 	for i := range matrixX1 {
 		matrixX1[i] = make([]float64, 1)
 	}
-	for i := range matrixX2 {
-		matrixX2[i] = make([]float64, 1)
+	for i := range MatrixX2 {
+		MatrixX2[i] = make([]float64, 1)
 	}
 
-	for i := 0; i < size; i++ {
-		matrixX2[i][0] = matrixB[i][0] / matrixA[i][i]
+	for i := 0; i < Size; i++ {
+		MatrixX2[i][0] = matrixB[i][0] / matrixA[i][i]
 	}
 }
 
-func entryPoint() {
-	count := 0
+func EntryPoint() {
 
 	for true {
 		//iteration
-		for i := 0; i < size; i++ {
-			matrixX1[i][0] = matrixX2[i][0]
+		for i := 0; i < Size; i++ {
+			matrixX1[i][0] = MatrixX2[i][0] // перезапись матрицы
 		}
-		for i := 0; i < size; i++ {
+		for i := 0; i < Size; i++ {
 			sum := 0.0
-			for j := 0; j < size; j++ {
+			for j := 0; j < Size; j++ {
 				if j < i {
-					sum += matrixA[i][j] * matrixX2[j][0] / matrixA[i][i]
+					sum += matrixA[i][j] * MatrixX2[j][0] / matrixA[i][i] // расчет суммы до
 				} else if j != i {
-					sum += matrixA[i][j] * matrixX1[j][0] / matrixA[i][i]
+					sum += matrixA[i][j] * matrixX1[j][0] / matrixA[i][i] // расчет суммы после
 				}
 			}
-			matrixX2[i][0] = matrixB[i][0]/matrixA[i][i] - sum
+			MatrixX2[i][0] = matrixB[i][0]/matrixA[i][i] - sum // вычитание сумм
 		}
-		count++
-		if checkResults() || count >= M {
+		count++                             // + итерация
+		if checkPrecision() || count >= M { // проверка точности и номера итерации
 			break
 		}
 	}
-
-	fmt.Println("-----result vector-----")
-	for i := 0; i < size; i++ {
-		fmt.Printf("x%d=%e \n", i+1, matrixX2[i][0])
-	}
-
-	fmt.Println("\n-----converges?-----")
-	if count >= M {
-		fmt.Println("no")
-	} else {
-		fmt.Println("yes, converges at", count)
-	}
-
-	fmt.Println("\n-----error vector-----")
-	for i := 0; i < size; i++ {
-		fmt.Printf("x%d=%e \n", i+1, math.Abs(matrixX2[i][0]-matrixX1[i][0]))
-	}
 }
 
-func checkResults() bool {
-	for i := 0; i < size; i++ {
-		if math.Abs(matrixX2[i][0]-matrixX1[i][0]) > precision {
+func checkPrecision() bool {
+	for i := 0; i < Size; i++ {
+		if math.Abs(MatrixX2[i][0]-matrixX1[i][0]) > Precision {
 			return false
 		}
 	}
@@ -141,11 +124,11 @@ func checkResults() bool {
 
 // перестановка по индексам
 func swapLines(i int, j int) {
-	var tmp = matrixA[i]
+	tmp := matrixA[i]
 	matrixA[i] = matrixA[j]
 	matrixA[j] = tmp
 
-	var tmpB = matrixB[i][0]
+	tmpB := matrixB[i][0]
 	matrixB[i][0] = matrixB[j][0]
 	matrixB[j][0] = tmpB
 }

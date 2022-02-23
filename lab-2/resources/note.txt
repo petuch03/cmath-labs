@@ -1,0 +1,10 @@
+for typical half case:
+half 2 2 3 0.001 file
+
+for typical iteration case:
+iteration 2 0 1 0.001 file
+
+for typical newton case:
+newton 2 2.5 3.4 0.001 console
+or
+newton 2 -0.9 0.43 0.001 console
