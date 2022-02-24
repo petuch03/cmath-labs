@@ -80,17 +80,17 @@ func MainLab2() {
 		fmt.Printf("iterations: %d\n", len(xk)-1)
 		fmt.Printf("x= %f\n", currentXk)
 		fmt.Printf("f(x) = %f\n", currentFxk)
+		drawPlot()
 	} else if method == "half" {
 		entryPointHalf()
 		tableTemplateHalf(t)
 		fmt.Printf("iterations: %d\n", len(x)-1)
 		fmt.Printf("x = %f\n", currentX)
 		fmt.Printf("f(x) = %f\n", currentFx)
+		drawPlot()
 	} else if method == "newton" {
 		system()
 	}
-
-	drawPlot()
 
 	if outputType == "file" {
 		_ = w.Close()
@@ -214,9 +214,55 @@ func drawPlot() {
 func system() {
 	lab1.Size = 2
 	initSolve(lowerBound, upperBound)
-	fmt.Println("iterations: ", counter)
-	fmt.Println("x=", secondX, "\ny=", secondY)
-	os.Exit(0)
+	fmt.Printf("iterations: %d\n", counter)
+	fmt.Printf("x = %f\ny = %f", secondX, secondY)
+
+	p := plot.New()
+
+	p.Title.Text = "Function"
+	p.X.Label.Text = "X"
+	p.Y.Label.Text = "Y"
+
+	g := plotter.NewFunction(func(x float64) float64 {
+		if x < -1 {
+			return 0
+		}
+		return math.Sqrt(3*x + 3)
+	})
+	g.Dashes = []vg.Length{vg.Points(2), vg.Points(2)}
+	g.Width = vg.Points(1)
+	g.Color = color.RGBA{R: 189, G: 155, B: 25, A: 255}
+	g1 := plotter.NewFunction(func(x float64) float64 {
+		if x < -1 {
+			return 0
+		}
+		return -math.Sqrt(3*x + 3)
+	})
+	g1.Dashes = []vg.Length{vg.Points(2), vg.Points(2)}
+	g1.Width = vg.Points(1)
+	g1.Color = color.RGBA{R: 189, G: 155, B: 25, A: 255}
+
+	f := plotter.NewFunction(func(x float64) float64 { return (x * x) / 2 })
+	f.Color = color.RGBA{G: 255, A: 255}
+
+	xAxis := plotter.NewFunction(func(x float64) float64 { return 0 })
+	xAxis.Dashes = []vg.Length{vg.Points(2), vg.Points(2)}
+	xAxis.Width = vg.Points(1.5)
+	xAxis.Color = color.RGBA{A: 255}
+
+	p.Add(f, g1, xAxis, g)
+	p.Legend.Add("f", f)
+	p.Legend.Add("g", g)
+	p.Legend.ThumbnailWidth = 1 * vg.Inch
+
+	p.X.Min = -8
+	p.X.Max = 8
+	p.Y.Min = -8
+	p.Y.Max = 8
+
+	if err := p.Save(7*vg.Inch, 7*vg.Inch, "lab-2/resources/function.png"); err != nil {
+		log.Fatal(err)
+	}
 }
 
 // 1.8*x*x*x - 2.47*x*x - 5.53*x + 1.539
