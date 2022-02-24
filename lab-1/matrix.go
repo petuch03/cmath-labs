@@ -8,7 +8,7 @@ import (
 
 var matrixA [][]float64
 var matrixB [][]float64
-var matrixX1 [][]float64
+var MatrixX1 [][]float64
 var MatrixX2 [][]float64
 var isDefinitelyBigger bool
 var count = 0
@@ -74,10 +74,10 @@ func setDiagonalDominance() {
 }
 
 func SetResultMatrices() {
-	matrixX1 = make([][]float64, Size)
+	MatrixX1 = make([][]float64, Size)
 	MatrixX2 = make([][]float64, Size)
-	for i := range matrixX1 {
-		matrixX1[i] = make([]float64, 1)
+	for i := range MatrixX1 {
+		MatrixX1[i] = make([]float64, 1)
 	}
 	for i := range MatrixX2 {
 		MatrixX2[i] = make([]float64, 1)
@@ -93,7 +93,7 @@ func EntryPoint() {
 	for true {
 		//iteration
 		for i := 0; i < Size; i++ {
-			matrixX1[i][0] = MatrixX2[i][0] // перезапись матрицы
+			MatrixX1[i][0] = MatrixX2[i][0] // перезапись матрицы
 		}
 		for i := 0; i < Size; i++ {
 			sum := 0.0
@@ -101,7 +101,7 @@ func EntryPoint() {
 				if j < i {
 					sum += matrixA[i][j] * MatrixX2[j][0] / matrixA[i][i] // расчет суммы до
 				} else if j != i {
-					sum += matrixA[i][j] * matrixX1[j][0] / matrixA[i][i] // расчет суммы после
+					sum += matrixA[i][j] * MatrixX1[j][0] / matrixA[i][i] // расчет суммы после
 				}
 			}
 			MatrixX2[i][0] = matrixB[i][0]/matrixA[i][i] - sum // вычитание сумм
@@ -115,7 +115,7 @@ func EntryPoint() {
 
 func checkPrecision() bool {
 	for i := 0; i < Size; i++ {
-		if math.Abs(MatrixX2[i][0]-matrixX1[i][0]) > Precision {
+		if math.Abs(MatrixX2[i][0]-MatrixX1[i][0]) > Precision {
 			return false
 		}
 	}

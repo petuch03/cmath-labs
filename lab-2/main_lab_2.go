@@ -215,7 +215,11 @@ func system() {
 	lab1.Size = 2
 	initSolve(lowerBound, upperBound)
 	fmt.Printf("iterations: %d\n", counter)
-	fmt.Printf("x = %f\ny = %f", secondX, secondY)
+	fmt.Printf("x_1 = %e\nx_2 = %e\n", secondX, secondY)
+	fmt.Println("---error vector---")
+	for i := 0; i < lab1.Size; i++ {
+		fmt.Printf("x_%d = %e \n", i+1, math.Abs(lab1.MatrixX2[i][0]-lab1.MatrixX1[i][0]))
+	}
 
 	p := plot.New()
 

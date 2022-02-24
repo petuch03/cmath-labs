@@ -102,7 +102,7 @@ func MainLab1() {
 
 	fmt.Println("\n-----error vector-----")
 	for i := 0; i < Size; i++ {
-		fmt.Printf("x%d=%e \n", i+1, math.Abs(MatrixX2[i][0]-matrixX1[i][0]))
+		fmt.Printf("x%d=%e \n", i+1, math.Abs(MatrixX2[i][0]-MatrixX1[i][0]))
 	}
 	matrix = nil
 	debug.FreeOSMemory()

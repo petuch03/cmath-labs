@@ -1,1 +1,1 @@
-iteration 2 0 1 0.001 file
+newton 2 -0.9 0.43 0.001 file
