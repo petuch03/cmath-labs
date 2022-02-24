@@ -13,7 +13,9 @@ import (
 	"log"
 	"math"
 	"os"
+	"runtime"
 	"runtime/debug"
+	"time"
 )
 
 var lowerBound float64
@@ -29,7 +31,7 @@ var listOfExpressions = []string{
 	"1.8*x*x*x - 2.47*x*x - 5.53*x + 1.539",
 	"sin_x",
 	"sin_x + cos_x",
-	"system: {x^2-2y=0, 3x-y^2+3=0}",
+	"system: {x^2-3y=0, y^2-2x=0}",
 }
 var currentExpression = listOfExpressions[index-1]
 var expressions = map[string]string{
@@ -74,6 +76,7 @@ func MainLab2() {
 		os.Stdout = w
 	}
 	t := table.NewWriter()
+	start := time.Now()
 	if method == "iteration" {
 		entryPointIteration()
 		tableTemplateIteration(t)
@@ -91,6 +94,9 @@ func MainLab2() {
 	} else if method == "newton" {
 		system()
 	}
+	duration := time.Since(start)
+	fmt.Println("----", duration, "----")
+	PrintMemUsage()
 
 	if outputType == "file" {
 		_ = w.Close()
@@ -213,8 +219,11 @@ func drawPlot() {
 
 func system() {
 	lab1.Size = 2
-	initSolve(lowerBound, upperBound)
+	entryPointNewton(lowerBound, upperBound)
 	fmt.Printf("iterations: %d\n", counter)
+	if counter >= 50 {
+		println("iteration limit stopped the program")
+	}
 	fmt.Printf("x_1 = %e\nx_2 = %e\n", secondX, secondY)
 	fmt.Println("---error vector---")
 	for i := 0; i < lab1.Size; i++ {
@@ -228,25 +237,25 @@ func system() {
 	p.Y.Label.Text = "Y"
 
 	g := plotter.NewFunction(func(x float64) float64 {
-		if x < -1 {
+		if x < 0 {
 			return 0
 		}
-		return math.Sqrt(3*x + 3)
+		return math.Sqrt(2 * x)
 	})
 	g.Dashes = []vg.Length{vg.Points(2), vg.Points(2)}
 	g.Width = vg.Points(1)
 	g.Color = color.RGBA{R: 189, G: 155, B: 25, A: 255}
 	g1 := plotter.NewFunction(func(x float64) float64 {
-		if x < -1 {
+		if x < 0 {
 			return 0
 		}
-		return -math.Sqrt(3*x + 3)
+		return -math.Sqrt(2 * x)
 	})
 	g1.Dashes = []vg.Length{vg.Points(2), vg.Points(2)}
 	g1.Width = vg.Points(1)
 	g1.Color = color.RGBA{R: 189, G: 155, B: 25, A: 255}
 
-	f := plotter.NewFunction(func(x float64) float64 { return (x * x) / 2 })
+	f := plotter.NewFunction(func(x float64) float64 { return x * x / 3 })
 	f.Color = color.RGBA{G: 255, A: 255}
 
 	xAxis := plotter.NewFunction(func(x float64) float64 { return 0 })
@@ -271,3 +280,16 @@ func system() {
 
 // 1.8*x*x*x - 2.47*x*x - 5.53*x + 1.539
 // (-2, -1), (0, 1), (2, 3)
+
+func PrintMemUsage() {
+	var m runtime.MemStats
+	runtime.ReadMemStats(&m)
+	// For info on each, see: https://golang.org/pkg/runtime/#MemStats
+	fmt.Printf("Alloc = %v KB\n", btoKB(float64(m.Alloc)))
+	fmt.Printf("TotalAlloc = %v KB\n", btoKB(float64(m.TotalAlloc)))
+	fmt.Printf("Sys = %v KB\n", btoKB(float64(m.Sys)))
+}
+
+func btoKB(b float64) float64 {
+	return b / 1024 / 1024 / 1024
+}

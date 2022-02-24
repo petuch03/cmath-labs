@@ -40,7 +40,7 @@ func entryPointIteration() {
 
 	currentModxk = math.Abs(currentXk - currentXk1)
 	modxk = append(modxk, myType{currentXk})
-	for precision < math.Abs(currentModxk) {
+	for precision < math.Abs(currentModxk) && counter <= 50 {
 		currentXk = currentXk1
 		currentFxk = function(currentXk)
 		currentPhixk = currentXk + lambda*currentFxk
@@ -53,9 +53,4 @@ func entryPointIteration() {
 		xk1 = append(xk1, myType{currentXk1})
 		modxk = append(modxk, myType{currentModxk})
 	}
-}
-
-func checkInitialIteration() int {
-	// ??
-	return 0
 }

@@ -59,6 +59,7 @@ func entryPointHalf() {
 			currentFx = function(currentX)
 			currentMod = math.Abs(currentA - currentB)
 		} else {
+			println("no root on interval")
 			os.Exit(1)
 		}
 
