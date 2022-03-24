@@ -1,6 +1,9 @@
 package lab_3
 
-import "math"
+import (
+	"fmt"
+	"math"
+)
 
 var a float64
 var b float64
@@ -30,6 +33,7 @@ func startSquare() {
 			break
 		}
 		prevRes = res
+		fmt.Printf("n = %d; res = %f\n", n, res)
 		n *= 2
 	}
 }

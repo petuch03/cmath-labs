@@ -21,6 +21,7 @@ func startSimpson() {
 			break
 		}
 		prevRes = res
+		fmt.Printf("res = %f\n", res)
 		n *= 2
 	}
 }
@@ -37,13 +38,13 @@ func entryPointSimpson(innerN int) {
 	yI = f(a)
 	counter++
 
-	fmt.Printf("y%d = %f \n", 0, yI0)
-	fmt.Printf("x%d = %f \n", 0, xI1)
-	fmt.Printf("h = %f \n\n", h)
+	//fmt.Printf("y%d = %f \n", 0, yI0)
+	//fmt.Printf("x%d = %f \n", 0, xI1)
+	//fmt.Printf("h = %f \n\n", h)
 
 	for i := 0; i < innerN; i++ {
-		fmt.Printf("y%d = %f \n", i, yI)
-		fmt.Printf("x%d = %f \n", i+1, xI)
+		//fmt.Printf("y%d = %f \n", i, yI)
+		//fmt.Printf("x%d = %f \n", i+1, xI)
 		yI = f(xI)
 		xI1 = xI
 		xI = xI1 + h
@@ -57,8 +58,8 @@ func entryPointSimpson(innerN int) {
 		counter++
 	}
 	yI = f(b)
-	fmt.Printf("y%d = %f \n", 6, yI)
-	fmt.Printf("sumEven = %f \n", sumEven)
-	fmt.Printf("sumOdd = %f \n", sumOdd)
+	//fmt.Printf("y%d = %f \n", 6, yI)
+	//fmt.Printf("sumEven = %f \n", sumEven)
+	//fmt.Printf("sumOdd = %f \n", sumOdd)
 	result = h / 3 * (yI0 + 4*sumOdd + 2*sumEven + yI)
 }

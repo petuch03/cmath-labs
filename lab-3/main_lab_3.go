@@ -11,6 +11,8 @@ var index = 1
 var calcType string
 var listOfExpressions = []string{
 	"3*x*x*x - 4*x*x + 5*x - 16",
+	"3*x*x*x*x/4 - 4*x*x*x/3 + 5*x*x/2 - 16*x",
+	"2*x*x - 5*x + 1",
 	"x",
 }
 var currentExpression = listOfExpressions[index-1]
@@ -35,6 +37,7 @@ func MainLab3() {
 	currentExpression = listOfExpressions[index-1]
 	println()
 
+	fmt.Printf("res: %f\n", inte(4)-inte(2))
 	if calcType == "left" || calcType == "right" || calcType == "center" {
 		println("===calculation initiated===")
 		//entryPointSquare(calcType, 6)
@@ -44,8 +47,7 @@ func MainLab3() {
 		fmt.Printf("square   n: %d", n)
 	} else if calcType == "simpson" {
 		println("===calculation initiated===")
-		entryPointSimpson(6)
-		//startSimpson()
+		startSimpson()
 		printf64("simpson res:", result)
 		fmt.Printf("simpson   n: %d", n)
 	} else {
@@ -56,6 +58,26 @@ func MainLab3() {
 
 func f(x float64) float64 {
 	expression, _ := govaluate.NewEvaluableExpression(currentExpression)
+
+	parameters := make(map[string]interface{}, 8)
+	parameters["x"] = x
+	parameters["sin_x"] = math.Sin(x)
+	parameters["cos_x"] = math.Cos(x)
+	result, _ := expression.Evaluate(parameters)
+
+	switch i := result.(type) {
+	case float64:
+		return i
+	case float32:
+		return float64(i)
+	default:
+		os.Exit(1)
+		return -1
+	}
+}
+
+func inte(x float64) float64 {
+	expression, _ := govaluate.NewEvaluableExpression(listOfExpressions[1])
 
 	parameters := make(map[string]interface{}, 8)
 	parameters["x"] = x
