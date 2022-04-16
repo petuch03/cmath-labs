@@ -13,9 +13,12 @@ import (
 var InputSeries [][]float64
 var Size = 11
 var inputType string
+var outputType string
 
 func MainLab4() {
 	// all calculations here
+	//fmt.Print("print 'file' to set stdout to file (otherwise press enter): ")
+	//_, _ = fmt.Scanf("%s", &outputType)
 	fmt.Print("print 'input?' or 'console' to set input type: ")
 	_, _ = fmt.Scanf("%s", &inputType)
 	if inputType == "input1" {
@@ -39,7 +42,7 @@ func MainLab4() {
 	// HTML builder
 	forHTML()
 
-	tmpl := template.New("sample")
+	tmpl := template.New("tmpl")
 	tmpl.Funcs(template.FuncMap{
 		"IncludeHTML": IncludeHTML,
 	})
@@ -47,8 +50,13 @@ func MainLab4() {
 	tmpl, err2 := tmpl.Parse(`
 <!DOCTYPE>
 <html>
-<body> <h1 align="center"> Summary of all charts </h1> <br>
-<br> 
+<body> <h1 align="center" width="100%"> Summary of all charts </h1>
+ 
+ <div align="center" width="100%">
+<a href="/info" align="center">
+    <input type="button" value="info here"></input>
+ </a>
+</div>
     <div align="center">
 		{{ IncludeHTML "./lab-4/resources/graphs/graph1.svg" }}
 		{{ IncludeHTML "./lab-4/resources/graphs/graph2.svg" }}
@@ -75,18 +83,47 @@ func MainLab4() {
 		}
 	})
 
+	http.Handle("/info", http.HandlerFunc(infoHandler))
+
 	//fmt.Printf("%+v\n", calculations.GlobalConstants)
 
 	_ = http.ListenAndServe(":9999", nil)
 }
 
 func forHTML() {
+	rescueStdout := os.Stdout
+	r, w, _ := os.Pipe()
+	var F *os.File
+
+	F, _ = os.Create("lab-4/resources/outputs/output1.txt")
+	os.Stdout = w
+
 	drawLinear()
-	drawPow()
-	drawExp()
-	drawCub()
-	drawLog()
 	drawQuad()
+	drawCub()
+	drawExp()
+	drawPow()
+	drawLog()
+
+	_ = w.Close()
+	out, _ := ioutil.ReadAll(r)
+	os.Stdout = rescueStdout
+
+	_, _ = F.Write(out)
+}
+
+func infoHandler(w http.ResponseWriter, req *http.Request) {
+	w.Header().Set("Content-Type", "text/plain")
+	b, err := ioutil.ReadFile("lab-4/resources/outputs/output1.txt") // just pass the file name
+	if err != nil {
+		fmt.Print(err)
+	}
+
+	_, err = w.Write(b)
+	if err != nil {
+		return
+	}
+
 }
 
 func IncludeHTML(path string) template.HTML {
