@@ -15,6 +15,19 @@ func LinearApproximation(inputSeries [][]float64, size int) *m.Series {
 	linearAnswers := CalculateMatrix(a, 2)
 
 	linearSeries := m.NewSeries()
+
+	sumx := 0.0
+	sumOldY := 0.0
+	for i := 0; i < size; i++ {
+		sumx += inputSeries[i][0]
+		sumOldY += inputSeries[i][1]
+	}
+	avgX := sumx / float64(size)
+	avgY := sumOldY / float64(size)
+	sumMult := 0.0
+	sumXForSquare := 0.0
+	sumYForSquare := 0.0
+
 	eps := 0.0
 	y2 := 0.0
 	sumy := 0.0
@@ -22,12 +35,18 @@ func LinearApproximation(inputSeries [][]float64, size int) *m.Series {
 		y := linearAnswers[0]*inputSeries[i][0] + linearAnswers[1]
 		linearSeries.Add(m.MakeValue(inputSeries[i][0], y))
 
+		sumMult += (inputSeries[i][0] - avgX) * (inputSeries[i][1] - avgY)
+		sumXForSquare += (inputSeries[i][0] - avgX) * (inputSeries[i][0] - avgX)
+		sumYForSquare += (inputSeries[i][1] - avgY) * (inputSeries[i][1] - avgY)
+
 		y2 += y * y
 		sumy += y
 		eps += math.Pow(math.Abs(y-inputSeries[i][1]), 2)
 	}
+
 	fmt.Printf("---linear---\neps = %f\n", eps)
 	fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
+	fmt.Printf("r = %f\n", sumMult/math.Sqrt(sumXForSquare*sumYForSquare))
 	fmt.Printf("P(x) = %f * x + %f\n\n", linearAnswers[0], linearAnswers[1])
 
 	return linearSeries
@@ -147,7 +166,7 @@ func QuadraticApproximation(inputSeries [][]float64, size int) *m.Series {
 
 	fmt.Printf("---quadratic---\neps = %f\n", eps)
 	fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
-	fmt.Printf("P(x) = %f * x^2 + %f * x + %f\n\n", quadraticAnswers[2], quadraticAnswers[2], quadraticAnswers[0])
+	fmt.Printf("P(x) = %f * x^2 + %f * x + %f\n\n", quadraticAnswers[2], quadraticAnswers[1], quadraticAnswers[0])
 
 	return quadraticSeries
 }
