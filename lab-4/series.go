@@ -19,6 +19,7 @@ func getRawSeries() *m.Series {
 
 func f(x float64) float64 {
 	return 4 * x / (math.Pow(x, 4) + 4)
+	//return 4*math.Log(x) + 6 // to test log approximation
 	//return 4*x + 1  // to test pierson's correlation coefficient
 }
 

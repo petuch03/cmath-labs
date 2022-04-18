@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"sort"
 )
 
 var InputSeries [][]float64
@@ -35,6 +36,15 @@ func MainLab4() {
 
 		_ = f.Close()
 		os.Stdin = oldStdin
+	} else if inputType == "input2" {
+		f, _ := os.Open("lab-4/resources/inputs/input2.txt")
+		oldStdin := os.Stdin
+		os.Stdin = f
+
+		customInput()
+
+		_ = f.Close()
+		os.Stdin = oldStdin
 	} else if inputType == "console" {
 		customInput()
 	} else {
@@ -42,6 +52,9 @@ func MainLab4() {
 		fmt.Print("initiated default function approximation...\n")
 		input()
 	}
+	sort.Slice(InputSeries, func(i, j int) bool {
+		return InputSeries[i][0] < InputSeries[j][0]
+	})
 	calculations.FillConstants(InputSeries)
 
 	// HTML builder
