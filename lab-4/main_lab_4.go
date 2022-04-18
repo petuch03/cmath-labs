@@ -45,6 +45,15 @@ func MainLab4() {
 
 		_ = f.Close()
 		os.Stdin = oldStdin
+	} else if inputType == "input0" {
+		f, _ := os.Open("lab-4/resources/inputs/input0.txt")
+		oldStdin := os.Stdin
+		os.Stdin = f
+
+		customInput()
+
+		_ = f.Close()
+		os.Stdin = oldStdin
 	} else if inputType == "console" {
 		customInput()
 	} else {
