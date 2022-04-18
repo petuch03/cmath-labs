@@ -1,13 +1,17 @@
 package lab_4
 
 import (
+	"bufio"
+	"bytes"
 	"cmath-labs/lab-4/calculations"
 	"fmt"
 	"html/template"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 var InputSeries [][]float64
@@ -19,6 +23,7 @@ func MainLab4() {
 	// all calculations here
 	//fmt.Print("print 'file' to set stdout to file (otherwise press enter): ")
 	//_, _ = fmt.Scanf("%s", &outputType)
+	fmt.Print("result will be at localhost:9999/main\n")
 	fmt.Print("print 'input?' or 'console' to set input type: ")
 	_, _ = fmt.Scanf("%s", &inputType)
 	if inputType == "input1" {
@@ -87,10 +92,16 @@ func MainLab4() {
 
 	//fmt.Printf("%+v\n", calculations.GlobalConstants)
 
+	ba, err := readFile("lab-4/resources/outputs/output1.txt")
+	if err != nil {
+		fmt.Printf("Error: %s\n", err)
+	}
+	fmt.Printf("%s \n", ba)
 	_ = http.ListenAndServe(":9999", nil)
 }
 
 func forHTML() {
+
 	rescueStdout := os.Stdout
 	r, w, _ := os.Pipe()
 	var F *os.File
@@ -134,4 +145,43 @@ func IncludeHTML(path string) template.HTML {
 	}
 
 	return template.HTML(string(b))
+}
+
+func readFile(path string) ([]byte, error) {
+	parentPath, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	pullPath := filepath.Join(parentPath, path)
+	file, err := os.Open(pullPath)
+	if err != nil {
+		return nil, err
+	}
+
+	defer file.Close()
+	return read(file)
+}
+
+func read(fd_r io.Reader) ([]byte, error) {
+	br := bufio.NewReader(fd_r)
+	var buf bytes.Buffer
+
+	for {
+		ba, isPrefix, err := br.ReadLine()
+
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return nil, err
+		}
+
+		buf.Write(ba)
+		if !isPrefix {
+			buf.WriteByte('\n')
+		}
+
+	}
+	return buf.Bytes(), nil
 }
