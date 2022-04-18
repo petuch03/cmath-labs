@@ -31,7 +31,7 @@ func input() {
 		InputSeries[i] = make([]float64, 2)
 	}
 	for i := 0; i < Size; i++ {
-		InputSeries[i][0] = 0 + (float64(i) * 0.2)
+		InputSeries[i][0] = -2 + (float64(i) * 0.2)
 		InputSeries[i][1] = f(InputSeries[i][0])
 	}
 
