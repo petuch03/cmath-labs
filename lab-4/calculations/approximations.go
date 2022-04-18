@@ -52,97 +52,6 @@ func LinearApproximation(inputSeries [][]float64, size int) *m.Series {
 	return linearSeries
 }
 
-func ExponentApproximation(inputSeries [][]float64, size int) *m.Series {
-
-	exponentAnswers := make([]float64, 2)
-
-	exponentAnswers[1] =
-		(float64(len(inputSeries))*GlobalSums.xLnY - GlobalSums.x1*GlobalSums.lnY) / (float64(len(inputSeries))*GlobalSums.x2 - math.Pow(GlobalSums.x1, 2))
-
-	exponentAnswers[0] =
-		GlobalSums.lnY/float64(len(inputSeries)) - exponentAnswers[1]*GlobalSums.x1/float64(len(inputSeries))
-	expSeries := m.NewSeries()
-	eps := 0.0
-	y2 := 0.0
-	sumy := 0.0
-	for i := 0; i < size; i++ {
-		if inputSeries[i][1] >= 0.0000000000001 {
-			y := math.Exp(exponentAnswers[1]*inputSeries[i][0] + exponentAnswers[0])
-			expSeries.Add(m.MakeValue(inputSeries[i][0], y))
-			y2 += y * y
-			sumy += y
-			eps += math.Pow(math.Abs(y-inputSeries[i][1]), 2)
-		}
-	}
-	//fmt.Printf("%f %f", exponentAnswers[0], exponentAnswers[1])
-	fmt.Printf("---exponent---\neps = %f\n", eps)
-	fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
-	fmt.Printf("P(x) = e ^ (%f * x + %f)\n\n", exponentAnswers[1], exponentAnswers[0])
-
-	return expSeries
-}
-
-func LogApproximation(inputSeries [][]float64, size int) *m.Series {
-	logAnswers := make([]float64, 2)
-
-	logAnswers[1] =
-		(float64(len(inputSeries))*GlobalSums.yLnX - GlobalSums.lnX*GlobalSums.y) /
-			(float64(len(inputSeries))*GlobalSums.ln2X - math.Pow(GlobalSums.lnX, 2))
-
-	logAnswers[0] =
-		(GlobalSums.y / float64(len(inputSeries))) -
-			(logAnswers[1] * GlobalSums.lnX / float64(len(inputSeries)))
-
-	logSeries := m.NewSeries()
-	eps := 0.0
-	y2 := 0.0
-	sumy := 0.0
-	for i := 0; i < size; i++ {
-		if inputSeries[i][0] != math.NaN() && inputSeries[i][0] >= 0.0000000000001 {
-			y := logAnswers[0] + logAnswers[1]*math.Log(inputSeries[i][0])
-			logSeries.Add(m.MakeValue(inputSeries[i][0], y))
-			y2 += y * y
-			sumy += y
-			eps += math.Pow(math.Abs(y-inputSeries[i][1]), 2)
-		}
-	}
-	fmt.Printf("---log---\neps = %f\n", eps)
-	fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
-	fmt.Printf("P(x) = %f * ln(x) + %f\n\n", logAnswers[1], logAnswers[0])
-	return logSeries
-}
-
-func PowApproximation(inputSeries [][]float64, size int) *m.Series {
-	powAnswers := make([]float64, 2)
-
-	powAnswers[1] =
-		(float64(len(inputSeries))*GlobalSums.lnXLnY - GlobalSums.lnX*GlobalSums.lnY) /
-			(float64(len(inputSeries))*GlobalSums.ln2X - math.Pow(GlobalSums.lnX, 2))
-
-	powAnswers[0] = math.Exp(
-		GlobalSums.lnY/float64(len(inputSeries)) -
-			powAnswers[1]*GlobalSums.lnX/float64(len(inputSeries)))
-
-	powSeries := m.NewSeries()
-	eps := 0.0
-	y2 := 0.0
-	sumy := 0.0
-	for i := 0; i < size; i++ {
-		if inputSeries[i][0] >= 0.0000000000001 {
-			y := math.Pow(inputSeries[i][0], powAnswers[1]) * powAnswers[0]
-			powSeries.Add(m.MakeValue(inputSeries[i][0], y))
-			y2 += y * y
-			sumy += y
-			eps += math.Pow(math.Abs(y-inputSeries[i][1]), 2)
-		}
-	}
-	fmt.Printf("---power---\neps = %f\n", eps)
-	fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
-	fmt.Printf("P(x) = x ^ (%f) + %f\n\n", powAnswers[1], powAnswers[0])
-
-	return powSeries
-}
-
 func QuadraticApproximation(inputSeries [][]float64, size int) *m.Series {
 	a := matrix{
 		{float64(len(inputSeries)), GlobalSums.x1, GlobalSums.x2, GlobalSums.y},
@@ -198,4 +107,103 @@ func CubicApproximation(inputSeries [][]float64, size int) *m.Series {
 	fmt.Printf("P(x) = %f * x^3 + %f * x^2 + %f * x + %f\n\n", cubicAnswers[3], cubicAnswers[2], cubicAnswers[1], cubicAnswers[0])
 
 	return cubicSeries
+}
+
+func ExponentApproximation(inputSeries [][]float64, size int) *m.Series {
+
+	a := matrix{
+		{GlobalSums.x2, GlobalSums.x1, GlobalSums.xLnY},
+		{GlobalSums.x1, float64(size), GlobalSums.lnY},
+	}
+
+	exponentAnswers := CalculateMatrix(a, 2)
+	exponentAnswers[1] = math.Exp(exponentAnswers[1])
+
+	expSeries := m.NewSeries()
+	eps := 0.0
+	y2 := 0.0
+	sumy := 0.0
+	for i := 0; i < size; i++ {
+		if inputSeries[i][1] >= 0.0000000000001 {
+			y := exponentAnswers[1] * math.Exp(exponentAnswers[0]*inputSeries[i][0])
+			expSeries.Add(m.MakeValue(inputSeries[i][0], y))
+			y2 += y * y
+			sumy += y
+			eps += math.Pow(math.Abs(y-inputSeries[i][1]), 2)
+		}
+	}
+
+	if expSeries.Size() != 0 {
+		fmt.Printf("---exponent---\neps = %f\n", eps)
+		fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
+		fmt.Printf("P(x) = %f * e ^ (%f * x)\n\n", exponentAnswers[0], exponentAnswers[1])
+	} else {
+		fmt.Printf("---exponent---\nNON VALID BOUNDS\n\n")
+	}
+
+	return expSeries
+}
+
+func LogApproximation(inputSeries [][]float64, size int) *m.Series {
+	a := matrix{
+		{GlobalSums.ln2X, GlobalSums.lnX, GlobalSums.yLnX},
+		{GlobalSums.lnX, float64(size), GlobalSums.y},
+	}
+
+	logAnswers := CalculateMatrix(a, 2) // unusual 0 for a, 1 for b
+
+	logSeries := m.NewSeries()
+	eps := 0.0
+	y2 := 0.0
+	sumy := 0.0
+	for i := 0; i < size; i++ {
+		if inputSeries[i][0] != math.NaN() && inputSeries[i][0] >= 0.0000000000001 {
+			y := logAnswers[0]*math.Log(inputSeries[i][0]) + logAnswers[1]
+			logSeries.Add(m.MakeValue(inputSeries[i][0], y))
+			y2 += y * y
+			sumy += y
+			eps += math.Pow(math.Abs(y-inputSeries[i][1]), 2)
+		}
+	}
+	if logSeries.Size() != 0 {
+		fmt.Printf("---log---\neps = %f\n", eps)
+		fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
+		fmt.Printf("P(x) = %f * ln(x) + %f\n\n", logAnswers[1], logAnswers[0])
+	} else {
+		fmt.Printf("---log---\nNON VALID BOUNDS\n\n")
+	}
+	return logSeries
+}
+
+func PowApproximation(inputSeries [][]float64, size int) *m.Series {
+	a := matrix{
+		{GlobalSums.ln2X, GlobalSums.lnX, GlobalSums.lnXLnY},
+		{GlobalSums.lnX, float64(size), GlobalSums.lnY},
+	}
+
+	powAnswers := CalculateMatrix(a, 2)
+	powAnswers[1] = math.Exp(powAnswers[1])
+
+	powSeries := m.NewSeries()
+	eps := 0.0
+	y2 := 0.0
+	sumy := 0.0
+	for i := 0; i < size; i++ {
+		if inputSeries[i][0] >= 0.0000000000001 {
+			y := powAnswers[1] * math.Pow(inputSeries[i][0], powAnswers[0])
+			powSeries.Add(m.MakeValue(inputSeries[i][0], y))
+			y2 += y * y
+			sumy += y
+			eps += math.Pow(math.Abs(y-inputSeries[i][1]), 2)
+		}
+	}
+	if powSeries.Size() != 0 {
+		fmt.Printf("---power---\neps = %f\n", eps)
+		fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
+		fmt.Printf("P(x) = x ^ (%f) + %f\n\n", powAnswers[1], powAnswers[0])
+	} else {
+		fmt.Printf("---power---\nNON VALID BOUNDS\n\n")
+	}
+
+	return powSeries
 }
