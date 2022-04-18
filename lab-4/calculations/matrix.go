@@ -3,13 +3,12 @@ package calculations
 import (
 	"fmt"
 	"math"
-	"os"
 )
 
 type matrix [][]float64
 type Vector []float64
 
-func CalculateMatrix(custom matrix, lines int) Vector {
+func CalculateMatrix(custom matrix, lines int) (Vector, error, error) {
 
 	columns := len(custom[0]) - 1
 	a := make(matrix, lines)
@@ -32,6 +31,9 @@ func CalculateMatrix(custom matrix, lines int) Vector {
 	for i := range index {
 		index[i] = i
 	}
+
+	var errMult error
+	var errNone error
 	for i := 0; i < len(a); i++ {
 
 		r := a[i][index[i]]
@@ -52,11 +54,12 @@ func CalculateMatrix(custom matrix, lines int) Vector {
 
 		if r == 0 {
 			if b[i] == 0 {
-				fmt.Println("система имеет множество решений")
+				errMult = fmt.Errorf("система имеет множество решений")
+				//fmt.Println("система имеет множество решений")
 			} else {
-				fmt.Println("система не имеет решений")
+				errNone = fmt.Errorf("система не имеет решений")
+				//fmt.Println("система не имеет решений")
 			}
-			os.Exit(1)
 		}
 
 		for j := 0; j < len(a[i]); j++ {
@@ -82,5 +85,6 @@ func CalculateMatrix(custom matrix, lines int) Vector {
 			x[i] = x[i] - (x[j] * a[i][index[j]])
 		}
 	}
-	return x
+
+	return x, errMult, errNone
 }
