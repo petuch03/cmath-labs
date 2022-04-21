@@ -138,6 +138,9 @@ func forHTML() {
 	drawPow()
 	drawLog()
 
+	fmt.Printf("------\nBEST = %f\n", calculations.Best)
+	fmt.Printf("type for best %s\n", calculations.Name)
+
 	_ = w.Close()
 	out, _ := ioutil.ReadAll(r)
 	os.Stdout = rescueStdout

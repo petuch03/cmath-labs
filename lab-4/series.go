@@ -18,8 +18,8 @@ func getRawSeries() *m.Series {
 }
 
 func f(x float64) float64 {
-	return 4 * x / (math.Pow(x, 4) + 4)
-	//return 4*math.Log(x) + 6 // to test log approximation
+	//return 4 * x / (math.Pow(x, 4) + 4)
+	return 4*math.Log(x) + 6 // to test log approximation
 	//return 4*x + 1  // to test pierson's correlation coefficient
 }
 
@@ -31,8 +31,9 @@ func input() {
 		InputSeries[i] = make([]float64, 2)
 	}
 	for i := 0; i < Size; i++ {
-		InputSeries[i][0] = -2 + (float64(i) * 0.2)
+		InputSeries[i][0] = 0.1 + (float64(i) * 0.2)
 		InputSeries[i][1] = f(InputSeries[i][0])
+		//fmt.Printf("%f %f\n", InputSeries[i][0], InputSeries[i][1])
 	}
 
 	//for i := 0; i < Size; i++ {

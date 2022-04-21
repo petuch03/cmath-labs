@@ -6,6 +6,9 @@ import (
 	"math"
 )
 
+var Best float64 = 1
+var Name = ""
+
 func LinearApproximation(inputSeries [][]float64, size int) *m.Series {
 	a := matrix{
 		{GlobalSums.x2, GlobalSums.x1, GlobalSums.xy},
@@ -50,9 +53,16 @@ func LinearApproximation(inputSeries [][]float64, size int) *m.Series {
 	}
 
 	fmt.Printf("---linear---\neps = %f\n", eps)
-	fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
 	fmt.Printf("r = %f\n", sumMult/math.Sqrt(sumXForSquare*sumYForSquare))
 	fmt.Printf("P(x) = %f * x + %f\n\n", linearAnswers[0], linearAnswers[1])
+	fmt.Printf("res = %f\n", math.Sqrt(eps/11))
+	if Best > math.Sqrt(eps/11) {
+		Best = math.Sqrt(eps / 11)
+	}
+	if Best > math.Sqrt(eps/11) {
+		Best = math.Sqrt(eps / 11)
+		Name = "---linear---"
+	}
 
 	return linearSeries
 }
@@ -82,9 +92,12 @@ func QuadraticApproximation(inputSeries [][]float64, size int) *m.Series {
 	}
 
 	fmt.Printf("---quadratic---\neps = %f\n", eps)
-	fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
 	fmt.Printf("P(x) = %f * x^2 + %f * x + %f\n\n", quadraticAnswers[2], quadraticAnswers[1], quadraticAnswers[0])
-
+	fmt.Printf("res = %f\n", math.Sqrt(eps/11))
+	if Best > math.Sqrt(eps/11) {
+		Best = math.Sqrt(eps / 11)
+		Name = "---quadratic---"
+	}
 	return quadraticSeries
 }
 
@@ -115,9 +128,12 @@ func CubicApproximation(inputSeries [][]float64, size int) *m.Series {
 	}
 
 	fmt.Printf("---cubic---\neps = %f\n", eps)
-	fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
 	fmt.Printf("P(x) = %f * x^3 + %f * x^2 + %f * x + %f\n\n", cubicAnswers[3], cubicAnswers[2], cubicAnswers[1], cubicAnswers[0])
-
+	fmt.Printf("res = %f\n", math.Sqrt(eps/11))
+	if Best > math.Sqrt(eps/11) {
+		Best = math.Sqrt(eps / 11)
+		Name = "---cubic---"
+	}
 	return cubicSeries
 }
 
@@ -133,7 +149,7 @@ func ExponentApproximation(inputSeries [][]float64, size int) *m.Series {
 		fmt.Printf("---exponent---\nNON VALID BOUNDS\n\n")
 		return m.NewSeries()
 	}
-	exponentAnswers[1] = math.Exp(exponentAnswers[1])
+	exponentAnswers[0] = math.Exp(exponentAnswers[0])
 
 	expSeries := m.NewSeries()
 	eps := 0.0
@@ -141,7 +157,7 @@ func ExponentApproximation(inputSeries [][]float64, size int) *m.Series {
 	sumy := 0.0
 	for i := 0; i < size; i++ {
 		if inputSeries[i][1] >= 0.0000000000001 {
-			y := exponentAnswers[1] * math.Exp(exponentAnswers[0]*inputSeries[i][0])
+			y := exponentAnswers[0] * math.Exp(exponentAnswers[1]*inputSeries[i][0])
 			expSeries.Add(m.MakeValue(inputSeries[i][0], y))
 			y2 += y * y
 			sumy += y
@@ -151,12 +167,15 @@ func ExponentApproximation(inputSeries [][]float64, size int) *m.Series {
 
 	if expSeries.Size() != 0 {
 		fmt.Printf("---exponent---\neps = %f\n", eps)
-		fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
-		fmt.Printf("P(x) = %f * e ^ (%f * x)\n\n", exponentAnswers[1], exponentAnswers[0])
+		fmt.Printf("P(x) = %f * e ^ (%f * x)\n\n", exponentAnswers[0], exponentAnswers[1])
+		fmt.Printf("res = %f\n", math.Sqrt(eps/11))
 	} else {
 		fmt.Printf("---exponent---\nNON VALID BOUNDS\n\n")
 	}
-
+	if Best > math.Sqrt(eps/11) {
+		Best = math.Sqrt(eps / 11)
+		Name = "---exponent---"
+	}
 	return expSeries
 }
 
@@ -186,10 +205,14 @@ func LogApproximation(inputSeries [][]float64, size int) *m.Series {
 	}
 	if logSeries.Size() != 0 {
 		fmt.Printf("---log---\neps = %f\n", eps)
-		fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
 		fmt.Printf("P(x) = %f * ln(x) + %f\n\n", logAnswers[0], logAnswers[1])
+		fmt.Printf("res = %f\n", math.Sqrt(eps/11))
 	} else {
 		fmt.Printf("---log---\nNON VALID BOUNDS\n\n")
+	}
+	if Best > math.Sqrt(eps/11) {
+		Best = math.Sqrt(eps / 11)
+		Name = "---log---"
 	}
 	return logSeries
 }
@@ -225,10 +248,14 @@ func PowApproximation(inputSeries [][]float64, size int) *m.Series {
 	}
 	if powSeries.Size() != 0 {
 		fmt.Printf("---power---\neps = %f\n", eps)
-		fmt.Printf("R^2 = %f\n", 1-eps/(y2-(sumy/float64(size))))
 		fmt.Printf("P(x) = %f * x ^ (%f)\n\n", powAnswers[1], powAnswers[0])
+		fmt.Printf("res = %f\n", math.Sqrt(eps/11))
 	} else {
 		fmt.Printf("---power---\nNON VALID BOUNDS\n\n")
+	}
+	if Best > math.Sqrt(eps/11) {
+		Best = math.Sqrt(eps / 11)
+		Name = "---power---"
 	}
 
 	return powSeries
