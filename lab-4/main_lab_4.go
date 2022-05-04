@@ -3,7 +3,7 @@ package lab_4
 import (
 	"bufio"
 	"bytes"
-	"cmath-labs/lab-4/calculations"
+	"cmath-labs/lab-4/calculations_lab_4"
 	"fmt"
 	"html/template"
 	"io"
@@ -64,7 +64,7 @@ func MainLab4() {
 	sort.Slice(InputSeries, func(i, j int) bool {
 		return InputSeries[i][0] < InputSeries[j][0]
 	})
-	calculations.FillConstants(InputSeries)
+	calculations_lab_4.FillConstants(InputSeries)
 
 	// HTML builder
 	forHTML()
@@ -138,8 +138,8 @@ func forHTML() {
 	drawPow()
 	drawLog()
 
-	fmt.Printf("------\nBEST = %f\n", calculations.Best)
-	fmt.Printf("type for best %s\n", calculations.Name)
+	fmt.Printf("------\nBEST = %f\n", calculations_lab_4.Best)
+	fmt.Printf("type for best %s\n", calculations_lab_4.Name)
 
 	_ = w.Close()
 	out, _ := ioutil.ReadAll(r)

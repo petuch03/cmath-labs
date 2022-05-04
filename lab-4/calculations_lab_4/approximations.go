@@ -1,4 +1,4 @@
-package calculations
+package calculations_lab_4
 
 import (
 	"fmt"

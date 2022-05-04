@@ -1,7 +1,7 @@
 package lab_4
 
 import (
-	"cmath-labs/lab-4/calculations"
+	"cmath-labs/lab-4/calculations_lab_4"
 	m "github.com/erkkah/margaid"
 	"math"
 	"os"
@@ -9,7 +9,7 @@ import (
 
 func drawLinear() {
 	rawSeries := getRawSeries()
-	approximated := calculations.LinearApproximation(InputSeries, Size)
+	approximated := calculations_lab_4.LinearApproximation(InputSeries, Size)
 
 	diagram := m.New(400, 400,
 		m.WithRange(m.YAxis, math.Min(rawSeries.MinY(), approximated.MinY()), math.Max(rawSeries.MaxY(), approximated.MaxY())),
@@ -37,7 +37,7 @@ func drawLinear() {
 
 func drawExp() {
 	rawSeries := getRawSeries()
-	approximated := calculations.ExponentApproximation(InputSeries, Size)
+	approximated := calculations_lab_4.ExponentApproximation(InputSeries, Size)
 
 	diagram := m.New(400, 400,
 		//m.WithRange(m.YAxis, math.Min(rawSeries.MinY(), approximated.MinY()), math.Max(rawSeries.MaxY(), rawSeries.MaxY())),
@@ -68,7 +68,7 @@ func drawExp() {
 
 func drawLog() {
 	rawSeries := getRawSeries()
-	approximated := calculations.LogApproximation(InputSeries, Size)
+	approximated := calculations_lab_4.LogApproximation(InputSeries, Size)
 
 	diagram := m.New(400, 400,
 		m.WithRange(m.YAxis, math.Min(rawSeries.MinY(), approximated.MinY()), math.Max(rawSeries.MaxY(), approximated.MaxY())),
@@ -97,7 +97,7 @@ func drawLog() {
 
 func drawQuad() {
 	rawSeries := getRawSeries()
-	approximated := calculations.QuadraticApproximation(InputSeries, Size)
+	approximated := calculations_lab_4.QuadraticApproximation(InputSeries, Size)
 
 	diagram := m.New(400, 400,
 		m.WithRange(m.YAxis, math.Min(rawSeries.MinY(), approximated.MinY()), math.Max(rawSeries.MaxY(), approximated.MaxY())),
@@ -126,7 +126,7 @@ func drawQuad() {
 
 func drawCub() {
 	rawSeries := getRawSeries()
-	approximated := calculations.CubicApproximation(InputSeries, Size)
+	approximated := calculations_lab_4.CubicApproximation(InputSeries, Size)
 
 	diagram := m.New(400, 400,
 		m.WithRange(m.YAxis, math.Min(rawSeries.MinY(), approximated.MinY()), math.Max(rawSeries.MaxY(), approximated.MaxY())),
@@ -155,7 +155,7 @@ func drawCub() {
 
 func drawPow() {
 	rawSeries := getRawSeries()
-	approximated := calculations.PowApproximation(InputSeries, Size)
+	approximated := calculations_lab_4.PowApproximation(InputSeries, Size)
 
 	diagram := m.New(400, 400,
 		m.WithRange(m.YAxis, math.Min(rawSeries.MinY(), approximated.MinY()), math.Max(rawSeries.MaxY(), approximated.MaxY())),
