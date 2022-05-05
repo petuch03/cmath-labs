@@ -74,9 +74,19 @@ func NewtonInterpolation(inputSeries [][]float64, size int, x float64) *m.Series
 			}
 		}
 	}
+
+	//for columns := 0; columns < tableSize; columns++ {
+	//	for raws := 0; raws < tableSize-columns; raws++ {
+	//		fmt.Printf("%f ", table[columns][raws])
+	//	}
+	//	fmt.Println("")
+	//}
+	//fmt.Println("")
+
 	// if in left part
 	if math.Abs(inputSeries[betweenLeft][0]-x) <= math.Abs(inputSeries[betweenRight][0]-x) {
 		t = (x - inputSeries[betweenLeft][0]) / h
+		//fmt.Printf("%f\n", t)
 
 		res_y += inputSeries[betweenLeft][1] * coef
 		coef = t
