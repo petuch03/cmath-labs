@@ -35,6 +35,8 @@ func EulerMethod() *m.Series {
 			currentY += h * function_1(currentX, previousY)
 		} else if index == 2 {
 			currentY += h * function_2(currentX, previousY)
+		} else if index == 3 {
+			currentY += h * function_3(currentX, previousY)
 		}
 		euler[i][0] = currentX
 		euler[i][1] = currentY
@@ -68,6 +70,8 @@ func EulerMethodHalf() {
 			currentY += local_h * function_1(currentX, previousY)
 		} else if index == 2 {
 			currentY += local_h * function_2(currentX, previousY)
+		} else if index == 3 {
+			currentY += local_h * function_3(currentX, previousY)
 		}
 		euler_half[i][0] = currentX
 		euler_half[i][1] = currentY
@@ -99,6 +103,11 @@ func AdamsMethod() *m.Series {
 			k2 = h * function_2(previousX+h/2, previousY+k1/2)
 			k3 = h * function_2(previousX+h/2, previousY+k2/2)
 			k4 = h * function_2(previousX+h, previousY+k3)
+		} else if index == 3 {
+			k1 = h * function_3(previousX, previousY)
+			k2 = h * function_3(previousX+h/2, previousY+k1/2)
+			k3 = h * function_3(previousX+h/2, previousY+k2/2)
+			k4 = h * function_3(previousX+h, previousY+k3)
 		}
 		currentX := previousX + h
 		currentY := previousY + (k1+2*k2+2*k3+k4)/6
@@ -109,6 +118,8 @@ func AdamsMethod() *m.Series {
 			functionResults[i] = function_1(currentX, currentY)
 		} else if index == 2 {
 			functionResults[i] = function_2(currentX, currentY)
+		} else if index == 3 {
+			functionResults[i] = function_3(currentX, currentY)
 		}
 	}
 	for i := 4; i < n; i++ {
@@ -119,6 +130,8 @@ func AdamsMethod() *m.Series {
 			functionResults[i] = function_1(currentX, y_predictor)
 		} else if index == 2 {
 			functionResults[i] = function_2(currentX, y_predictor)
+		} else if index == 3 {
+			functionResults[i] = function_3(currentX, y_predictor)
 		}
 
 		y_corrector := adams[i-1][1] + h*(9*functionResults[i]+19*functionResults[i-1]-5*functionResults[i-2]+functionResults[i-3])/24
@@ -126,8 +139,8 @@ func AdamsMethod() *m.Series {
 			y_predictor = y_corrector
 			if index == 1 {
 				functionResults[i] = function_1(currentX, y_predictor)
-			} else if index == 2 {
-				functionResults[i] = function_2(currentX, y_predictor)
+			} else if index == 3 {
+				functionResults[i] = function_3(currentX, y_predictor)
 			}
 			y_corrector = adams[i-1][1] + h*(9*functionResults[i]+19*functionResults[i-1]-5*functionResults[i-2]+functionResults[i-3])/24
 		}
@@ -172,6 +185,11 @@ func AdamsMethodHalf() {
 			k2 = local_h * function_2(previousX+local_h/2, previousY+k1/2)
 			k3 = local_h * function_2(previousX+local_h/2, previousY+k2/2)
 			k4 = local_h * function_2(previousX+local_h, previousY+k3)
+		} else if index == 3 {
+			k1 = h * function_3(previousX, previousY)
+			k2 = h * function_3(previousX+h/2, previousY+k1/2)
+			k3 = h * function_3(previousX+h/2, previousY+k2/2)
+			k4 = h * function_3(previousX+h, previousY+k3)
 		}
 		currentX := previousX + local_h
 		currentY := previousY + (k1+2*k2+2*k3+k4)/6
@@ -182,6 +200,8 @@ func AdamsMethodHalf() {
 			functionResults[i] = function_1(currentX, currentY)
 		} else if index == 2 {
 			functionResults[i] = function_2(currentX, currentY)
+		} else if index == 3 {
+			functionResults[i] = function_3(currentX, currentY)
 		}
 	}
 	for i := 4; i < n; i++ {
@@ -193,6 +213,8 @@ func AdamsMethodHalf() {
 			functionResults[i] = function_1(currentX, y_pred)
 		} else if index == 2 {
 			functionResults[i] = function_2(currentX, y_pred)
+		} else if index == 3 {
+			functionResults[i] = function_3(currentX, y_pred)
 		}
 
 		y_cor := adams_half[i-1][1] + local_h*(9*functionResults[i]+19*functionResults[i-1]-5*functionResults[i-2]+functionResults[i-3])/24
@@ -203,6 +225,8 @@ func AdamsMethodHalf() {
 				functionResults[i] = function_1(currentX, y_pred)
 			} else if index == 2 {
 				functionResults[i] = function_2(currentX, y_pred)
+			} else if index == 3 {
+				functionResults[i] = function_3(currentX, y_pred)
 			}
 			y_cor = adams_half[i-1][1] + local_h*(9*functionResults[i]+19*functionResults[i-1]-5*functionResults[i-2]+functionResults[i-3])/24
 		}
@@ -220,6 +244,10 @@ func function_2(x float64, y float64) float64 {
 	return math.Pow(x+1, 3) - y
 }
 
+func function_3(x float64, y float64) float64 {
+	return 6*x*x + 5*y
+}
+
 func precise_1(x float64) float64 {
 	return -math.Pow(math.E, x) / (x*math.Pow(math.E, x) + (math.E - math.E))
 }
@@ -228,10 +256,18 @@ func precise_2(x float64) float64 {
 	return const_2()*math.Pow(math.E, -x) + x*x*x + 3*x - 2
 }
 
+func precise_3(x float64) float64 {
+	return const_3()*math.Pow(math.E, 5*x) - (6*x*x)/5 - (12*x)/25 - 12/125
+}
+
 func const_1() float64 {
 	return math.Pow(-math.E, a)/y0 - a*math.Pow(math.E, a)
 }
 
 func const_2() float64 {
 	return (y0 - a*a*a - 3*a + 2) * math.Pow(math.E, a)
+}
+
+func const_3() float64 {
+	return 1 / 125 * (347*math.Pow(math.E, (5*a-5)) - 6*(25*a*a+10*a+2))
 }

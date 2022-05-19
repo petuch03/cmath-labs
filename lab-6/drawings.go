@@ -64,7 +64,7 @@ func drawAdams() {
 	rawSeries := getRawSeries()
 
 	diagram := m.New(400, 400,
-		m.WithRange(m.YAxis, rawSeries.MinY(), rawSeries.MaxY()),
+		m.WithRange(m.YAxis, rawSeries.MinY(), adams.MaxY()),
 		m.WithAutorange(m.XAxis, rawSeries),
 		m.WithPadding(2),
 		m.WithColorScheme(90),

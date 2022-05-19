@@ -18,7 +18,7 @@ import (
 
 var index = 1
 var listOfExpressions = []string{
-	"y' = y + y^2+ x * y^2",
+	"y' = y + (1+x)*y^2",
 	"y' = -y + (x + 1)^3",
 }
 
@@ -118,6 +118,8 @@ func forHTML() {
 			precise = precise_1(euler[i][0])
 		} else if index == 2 {
 			precise = precise_2(euler[i][0])
+		} else if index == 3 {
+			precise = precise_3(euler[i][0])
 		}
 		t.AppendRows([]table_pac.Row{{
 			i,
@@ -139,6 +141,8 @@ func forHTML() {
 			precise = precise_1(adams[i][0])
 		} else if index == 2 {
 			precise = precise_2(adams[i][0])
+		} else if index == 3 {
+			precise = precise_3(euler[i][0])
 		}
 		t.AppendRows([]table_pac.Row{{
 			i,
@@ -232,6 +236,10 @@ func getRawSeries() *m.Series {
 	} else if index == 2 {
 		for i := 0; i < n; i++ {
 			rawSeries.Add(m.MakeValue(euler[i][0], precise_2(euler[i][0])))
+		}
+	} else if index == 3 {
+		for i := 0; i < n; i++ {
+			rawSeries.Add(m.MakeValue(euler[i][0], precise_3(euler[i][0])))
 		}
 	}
 
