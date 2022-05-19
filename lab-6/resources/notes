@@ -1,13 +1,20 @@
 1
 lower: 1
 upper: 2
+precision: 0.01
 y0: -1
 h: 0.05
-precision: 0.01
 
 2
 lower: 0
 upper: 3
+precision: 0.0001
 y0: 0
 h: 0.1
-precision: 0.0001
+
+3
+lower : 1
+upper: 1.1
+precision: 0.01
+y_0: 1
+h: 0.01

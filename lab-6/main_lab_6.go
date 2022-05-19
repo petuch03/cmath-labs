@@ -20,6 +20,7 @@ var index = 1
 var listOfExpressions = []string{
 	"y' = y + (1+x)*y^2",
 	"y' = -y + (x + 1)^3",
+	"y' = 6x^2 + 5y",
 }
 
 func MainLab6() {
@@ -111,7 +112,7 @@ func forHTML() {
 
 	t := table_pac.NewWriter()
 	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table_pac.Row{"#", "x", "y", "Runge", "precise"})
+	t.AppendHeader(table_pac.Row{"#", "x", "y", "Runge", "precise", "<=e"})
 	for i := 0; i < n; i++ {
 		precise := 0.0
 		if index == 1 {
@@ -127,14 +128,14 @@ func forHTML() {
 			math.Round(euler[i][1]*100000) / 100000,
 			math.Round(((euler[i][1]-euler_half[2*i][1])/(math.Pow(2, 2)-1))*100000) / 100000,
 			math.Round((precise)*100000) / 100000,
-		}})
+			math.Abs(((euler[i][1] - euler_half[2*i][1]) / (math.Pow(2, 2) - 1))) < precision}})
 	}
 	t.Render()
 
 	drawAdams()
 	t = table_pac.NewWriter()
 	t.SetOutputMirror(os.Stdout)
-	t.AppendHeader(table_pac.Row{"#", "x", "y", "runge", "precise"})
+	t.AppendHeader(table_pac.Row{"#", "x", "y", "runge", "precise", "<=e"})
 	for i := 0; i < n; i++ {
 		precise := 0.0
 		if index == 1 {
@@ -150,6 +151,7 @@ func forHTML() {
 			math.Round(adams[i][1]*100000) / 100000,
 			math.Round(((adams[i][1]-adams_half[2*i][1])/(math.Pow(2, 4)-1))*100000) / 100000,
 			math.Round((precise)*100000) / 100000,
+			math.Abs(((adams[i][1] - adams_half[2*i][1]) / (math.Pow(2, 4) - 1))) < precision,
 		}})
 	}
 	t.Render()

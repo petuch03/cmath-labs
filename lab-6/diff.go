@@ -124,29 +124,47 @@ func AdamsMethod() *m.Series {
 	}
 	for i := 4; i < n; i++ {
 		currentX := adams[i-1][0] + h
-		y_predictor := adams[i-1][1] + h*(55*functionResults[i-1]-59*functionResults[i-2]+37*functionResults[i-3]-9*functionResults[i-4])/24
-
+		currentY := 0.0
 		if index == 1 {
-			functionResults[i] = function_1(currentX, y_predictor)
+			currentY = adams[i-1][1] +
+				h*(function_1(adams[i-1][0], adams[i-1][1])) +
+				(h*h*(function_1(adams[i-1][0], adams[i-1][1])-
+					function_1(adams[i-2][0], adams[i-2][1])))/2 +
+				(5*h*h*h*(function_1(adams[i-1][0], adams[i-1][1])-
+					2*function_1(adams[i-2][0], adams[i-2][1])+
+					function_1(adams[i-3][0], adams[i-3][1])))/12 +
+				(3*h*h*h*h*(function_1(adams[i-1][0], adams[i-1][1])-
+					3*function_1(adams[i-2][0], adams[i-2][1])+
+					3*function_1(adams[i-3][0], adams[i-3][1])-
+					function_1(adams[i-4][0], adams[i-4][1])))/8
 		} else if index == 2 {
-			functionResults[i] = function_2(currentX, y_predictor)
+			currentY = adams[i-1][1] +
+				h*(function_2(adams[i-1][0], adams[i-1][1])) +
+				(h*h*(function_2(adams[i-1][0], adams[i-1][1])-
+					function_2(adams[i-2][0], adams[i-2][1])))/2 +
+				(5*h*h*h*(function_2(adams[i-1][0], adams[i-1][1])-
+					2*function_2(adams[i-2][0], adams[i-2][1])+
+					function_2(adams[i-3][0], adams[i-3][1])))/12 +
+				(3*h*h*h*h*(function_2(adams[i-1][0], adams[i-1][1])-
+					3*function_2(adams[i-2][0], adams[i-2][1])+
+					3*function_2(adams[i-3][0], adams[i-3][1])-
+					function_2(adams[i-4][0], adams[i-4][1])))/8
 		} else if index == 3 {
-			functionResults[i] = function_3(currentX, y_predictor)
-		}
-
-		y_corrector := adams[i-1][1] + h*(9*functionResults[i]+19*functionResults[i-1]-5*functionResults[i-2]+functionResults[i-3])/24
-		for precision < math.Abs(y_corrector-y_predictor) {
-			y_predictor = y_corrector
-			if index == 1 {
-				functionResults[i] = function_1(currentX, y_predictor)
-			} else if index == 3 {
-				functionResults[i] = function_3(currentX, y_predictor)
-			}
-			y_corrector = adams[i-1][1] + h*(9*functionResults[i]+19*functionResults[i-1]-5*functionResults[i-2]+functionResults[i-3])/24
+			currentY = adams[i-1][1] +
+				h*(function_3(adams[i-1][0], adams[i-1][1])) +
+				(h*h*(function_3(adams[i-1][0], adams[i-1][1])-
+					function_3(adams[i-2][0], adams[i-2][1])))/2 +
+				(5*h*h*h*(function_3(adams[i-1][0], adams[i-1][1])-
+					2*function_3(adams[i-2][0], adams[i-2][1])+
+					function_3(adams[i-3][0], adams[i-3][1])))/12 +
+				(3*h*h*h*h*(function_3(adams[i-1][0], adams[i-1][1])-
+					3*function_3(adams[i-2][0], adams[i-2][1])+
+					3*function_3(adams[i-3][0], adams[i-3][1])-
+					function_3(adams[i-4][0], adams[i-4][1])))/8
 		}
 
 		adams[i][0] = currentX
-		adams[i][1] = y_corrector
+		adams[i][1] = currentY
 	}
 	AdamsMethodHalf()
 	n = int((b-a)/h) + 1
@@ -206,33 +224,46 @@ func AdamsMethodHalf() {
 	}
 	for i := 4; i < n; i++ {
 		currentX := adams_half[i-1][0] + local_h
-
-		y_pred := adams_half[i-1][1] + local_h*(55*functionResults[i-1]-59*functionResults[i-2]+37*functionResults[i-3]-9*functionResults[i-4])/24
-
+		currentY := 0.0
 		if index == 1 {
-			functionResults[i] = function_1(currentX, y_pred)
+			currentY = adams_half[i-1][1] +
+				local_h*(function_1(adams_half[i-1][0], adams_half[i-1][1])) +
+				(local_h*local_h*(function_1(adams_half[i-1][0], adams_half[i-1][1])-
+					function_1(adams_half[i-2][0], adams_half[i-2][1])))/2 +
+				(5*local_h*local_h*local_h*(function_1(adams_half[i-1][0], adams_half[i-1][1])-
+					2*function_1(adams_half[i-2][0], adams_half[i-2][1])+
+					function_1(adams_half[i-3][0], adams_half[i-3][1])))/12 +
+				(3*local_h*local_h*local_h*local_h*(function_1(adams_half[i-1][0], adams_half[i-1][1])-
+					3*function_1(adams_half[i-2][0], adams_half[i-2][1])+
+					3*function_1(adams_half[i-3][0], adams_half[i-3][1])-
+					function_1(adams_half[i-4][0], adams_half[i-4][1])))/8
 		} else if index == 2 {
-			functionResults[i] = function_2(currentX, y_pred)
+			currentY = adams_half[i-1][1] +
+				local_h*(function_2(adams_half[i-1][0], adams_half[i-1][1])) +
+				(local_h*local_h*(function_2(adams_half[i-1][0], adams_half[i-1][1])-
+					function_2(adams_half[i-2][0], adams_half[i-2][1])))/2 +
+				(5*local_h*local_h*local_h*(function_2(adams_half[i-1][0], adams_half[i-1][1])-
+					2*function_2(adams_half[i-2][0], adams_half[i-2][1])+
+					function_2(adams_half[i-3][0], adams_half[i-3][1])))/12 +
+				(3*local_h*local_h*local_h*local_h*(function_2(adams_half[i-1][0], adams_half[i-1][1])-
+					3*function_2(adams_half[i-2][0], adams_half[i-2][1])+
+					3*function_2(adams_half[i-3][0], adams_half[i-3][1])-
+					function_2(adams_half[i-4][0], adams_half[i-4][1])))/8
 		} else if index == 3 {
-			functionResults[i] = function_3(currentX, y_pred)
+			currentY = adams_half[i-1][1] +
+				local_h*(function_3(adams_half[i-1][0], adams_half[i-1][1])) +
+				(local_h*local_h*(function_3(adams_half[i-1][0], adams_half[i-1][1])-
+					function_3(adams_half[i-2][0], adams_half[i-2][1])))/2 +
+				(5*local_h*local_h*local_h*(function_3(adams_half[i-1][0], adams_half[i-1][1])-
+					2*function_3(adams_half[i-2][0], adams_half[i-2][1])+
+					function_3(adams_half[i-3][0], adams_half[i-3][1])))/12 +
+				(3*local_h*local_h*local_h*local_h*(function_3(adams_half[i-1][0], adams_half[i-1][1])-
+					3*function_3(adams_half[i-2][0], adams_half[i-2][1])+
+					3*function_3(adams_half[i-3][0], adams_half[i-3][1])-
+					function_3(adams_half[i-4][0], adams_half[i-4][1])))/8
 		}
-
-		y_cor := adams_half[i-1][1] + local_h*(9*functionResults[i]+19*functionResults[i-1]-5*functionResults[i-2]+functionResults[i-3])/24
-
-		for precision < math.Abs(y_cor-y_pred) {
-			y_pred = y_cor
-			if index == 1 {
-				functionResults[i] = function_1(currentX, y_pred)
-			} else if index == 2 {
-				functionResults[i] = function_2(currentX, y_pred)
-			} else if index == 3 {
-				functionResults[i] = function_3(currentX, y_pred)
-			}
-			y_cor = adams_half[i-1][1] + local_h*(9*functionResults[i]+19*functionResults[i-1]-5*functionResults[i-2]+functionResults[i-3])/24
-		}
-
 		adams_half[i][0] = currentX
-		adams_half[i][1] = y_cor
+		adams_half[i][1] = currentY
 	}
 }
 
@@ -260,14 +291,10 @@ func precise_3(x float64) float64 {
 	return const_3()*math.Pow(math.E, 5*x) - (6*x*x)/5 - (12*x)/25 - 12/125
 }
 
-func const_1() float64 {
-	return math.Pow(-math.E, a)/y0 - a*math.Pow(math.E, a)
-}
-
 func const_2() float64 {
 	return (y0 - a*a*a - 3*a + 2) * math.Pow(math.E, a)
 }
 
 func const_3() float64 {
-	return 1 / 125 * (347*math.Pow(math.E, (5*a-5)) - 6*(25*a*a+10*a+2))
+	return (y0 + 12/125 + (12*a)/25 + (6*a*a)/5) / math.Pow(math.E, 5*a)
 }
