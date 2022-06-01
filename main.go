@@ -17,3 +17,5 @@ func main() {
 	//lab5.MainLab5()
 	lab6.MainLab6()
 }
+
+// all done, hooray!!
